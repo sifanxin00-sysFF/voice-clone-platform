@@ -125,7 +125,11 @@ export default function VoicesPage() {
   }, [voices, startPolling]);
 
   useEffect(() => {
-    return () => { pollRefs.current.forEach((interval) => clearInterval(interval)); };
+    const polls = pollRefs.current;
+    return () => {
+      polls.forEach((interval) => clearInterval(interval));
+      polls.clear();
+    };
   }, []);
 
   const validateAndSetFile = (f: File) => {

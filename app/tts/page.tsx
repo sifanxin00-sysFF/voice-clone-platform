@@ -95,8 +95,8 @@ export default function TtsPage() {
         }),
       });
       if (!res.ok) {
-        await res.json().catch(() => ({}));
-        throw new Error("繁大帅没钱了，暂时生成不了了 💸");
+        const data = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(data.error || "当前生成服务暂不可用，请稍后重试");
       }
       const data = await res.json() as { outputUrl: string };
       setOutputUrl(data.outputUrl);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 declare global {
   interface Window {
@@ -37,15 +37,11 @@ export function VantaBackground() {
   const effectRef = useRef<{ destroy: () => void } | null>(null);
   const scriptsLoaded = useRef(false);
 
-  function mobile() {
-    return window.innerWidth < 768;
-  }
-
-  function spawnEffect() {
+  const spawnEffect = useCallback(() => {
     if (!elRef.current || !window.VANTA) return;
     effectRef.current?.destroy();
     effectRef.current = null;
-    const { points, maxDistance, spacing } = getVantaParams(mobile());
+    const { points, maxDistance, spacing } = getVantaParams(window.innerWidth < 768);
     effectRef.current = window.VANTA.NET({
       el: elRef.current,
       mouseControls: true,
@@ -62,7 +58,7 @@ export function VantaBackground() {
       spacing,
       showDots: true,
     });
-  }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,7 +96,7 @@ export function VantaBackground() {
       effectRef.current?.destroy();
       effectRef.current = null;
     };
-  }, []);
+  }, [spawnEffect]);
 
   return (
     <div
